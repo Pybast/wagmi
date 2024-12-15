@@ -27,8 +27,8 @@ import {
 import { switchChain } from 'wagmi/actions'
 import { optimism, sepolia } from 'wagmi/chains'
 
+import type { ERC3770Address } from '../../../../packages/core/dist/types/actions/sendTransaction'
 import { wagmiContractConfig } from './contracts'
-import { ERC3770Address } from '../../../../packages/core/dist/types/actions/sendTransaction'
 
 export default function App() {
   useAccountEffect({

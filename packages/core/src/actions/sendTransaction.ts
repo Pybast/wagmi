@@ -13,11 +13,10 @@ import { sendTransaction as viem_sendTransaction } from 'viem/actions'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
 import {
-  chainShortNamesMapper,
-  extractAddressFromChainSpecificAddress,
-  getChainIdFromShortName,
   type ChainShortNames,
   type SelectChains,
+  extractAddressFromChainSpecificAddress,
+  getChainIdFromShortName,
 } from '../types/chain.js'
 import type {
   ChainIdParameter,
