@@ -5,7 +5,7 @@ import {
 } from 'mipd'
 import {
   type Address,
-  // type Chain,
+  type Chain,
   type Client,
   type EIP1193RequestFn,
   createClient,
@@ -14,7 +14,6 @@ import {
 } from 'viem'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { type Mutate, type StoreApi, createStore } from 'zustand/vanilla'
-import type { Chain } from './types/chain.js'
 
 import type {
   ConnectorEventMap,
@@ -38,9 +37,15 @@ export function createConfig<
   const chains extends readonly [Chain, ...Chain[]],
   transports extends Record<chains[number]['id'], Transport>,
   const connectorFns extends readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 >(
-  parameters: CreateConfigParameters<chains, transports, connectorFns>,
-): Config<chains, transports, connectorFns> {
+  parameters: CreateConfigParameters<
+    chains,
+    transports,
+    connectorFns,
+    chainSpecificAddresses
+  >,
+): Config<chains, transports, connectorFns, chainSpecificAddresses> {
   const {
     multiInjectedProviderDiscovery = true,
     storage = createStorage({
@@ -51,7 +56,7 @@ export function createConfig<
     }),
     syncConnectedChain = true,
     ssr = false,
-    chainSpecificAddresses = false,
+    chainSpecificAddresses = false as chainSpecificAddresses,
     ...rest
   } = parameters
 
@@ -299,25 +304,7 @@ export function createConfig<
         }))
       },
     )
-  // Update default chain when connector chain changes
-  // todo not sure about this line)
-  if (chainSpecificAddresses)
-    store.subscribe(
-      ({ connections, current }) =>
-        current ? connections.get(current)?.chainId : undefined,
-      (chainId) => {
-        // If chain is not configured, then don't switch over to it.
-        const isChainConfigured = chains
-          .getState()
-          .some((x) => x.id === chainId)
-        if (!isChainConfigured) return
 
-        return store.setState((x) => ({
-          ...x,
-          chainId: chainId ?? x.chainId,
-        }))
-      },
-    )
   // EIP-6963 subscribe for new wallet providers
   mipd?.subscribe((providerDetails) => {
     const connectorIdSet = new Set<string>()
@@ -437,6 +424,8 @@ export function createConfig<
     },
     storage,
 
+    chainSpecificAddresses: chainSpecificAddresses,
+
     getClient,
     get state() {
       return store.getState() as unknown as State<chains>
@@ -473,7 +462,6 @@ export function createConfig<
       store,
       ssr: Boolean(ssr),
       syncConnectedChain,
-      chainSpecificAddresses,
       transports: rest.transports as transports,
       chains: {
         setState(value) {
@@ -519,15 +507,16 @@ export type CreateConfigParameters<
   >,
   connectorFns extends
     readonly CreateConnectorFn[] = readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 > = Compute<
   {
     chains: chains
+    chainSpecificAddresses?: chainSpecificAddresses
     connectors?: connectorFns | undefined
     multiInjectedProviderDiscovery?: boolean | undefined
     storage?: Storage | null | undefined
     ssr?: boolean | undefined
     syncConnectedChain?: boolean | undefined
-    chainSpecificAddresses?: boolean | undefined
   } & OneOf<
     | ({ transports: transports } & {
         [key in keyof ClientConfig]?:
@@ -536,10 +525,9 @@ export type CreateConfigParameters<
           | undefined
       })
     | {
-        client(parameters: { chain: chains[number] }): Client<
-          transports[chains[number]['id']],
-          chains[number]
-        >
+        client(parameters: {
+          chain: chains[number]
+        }): Client<transports[chains[number]['id']], chains[number]>
       }
   >
 >
@@ -552,10 +540,13 @@ export type Config<
   >,
   connectorFns extends
     readonly CreateConnectorFn[] = readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 > = {
   readonly chains: chains
   readonly connectors: readonly Connector<connectorFns[number]>[]
   readonly storage: Storage | null
+
+  chainSpecificAddresses: chainSpecificAddresses
 
   readonly state: State<chains>
   setState<tchains extends readonly [Chain, ...Chain[]] = chains>(
@@ -594,7 +585,6 @@ type Internal<
   readonly store: Mutate<StoreApi<any>, [['zustand/persist', any]]>
   readonly ssr: boolean
   readonly syncConnectedChain: boolean
-  readonly chainSpecificAddresses: boolean
   readonly transports: transports
 
   chains: {

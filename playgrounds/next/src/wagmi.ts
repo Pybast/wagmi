@@ -16,7 +16,7 @@ export function getConfig() {
       storage: cookieStorage,
     }),
     ssr: true,
-    chainSpecificAddresses: false,
+    chainSpecificAddresses: true,
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
@@ -24,6 +24,10 @@ export function getConfig() {
     },
   })
 }
+
+const config = getConfig()
+
+config.chainSpecificAddresses
 
 declare module 'wagmi' {
   interface Register {

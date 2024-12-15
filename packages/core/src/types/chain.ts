@@ -1,12 +1,10 @@
-import type { ChainFormatters, Chain as viem_Chain } from 'viem'
+import type { Chain, ChainFormatters } from 'viem'
 import { celo as celoViem, zkSync as zkSyncViem } from 'viem/chains'
-
-import type { Compute } from '@wagmi/core/internal'
 
 import type { Config } from '../createConfig.js'
 import type { IsNarrowable, Merge } from './utils.js'
 
-export type chainShortNames =
+export type ChainShortNames =
   | 'eth'
   | 'bsc'
   | 'pol'
@@ -16,7 +14,7 @@ export type chainShortNames =
   | 'celo'
   | 'zkSync'
 
-export const chainShortNamesMapper: Record<number, chainShortNames> = {
+export const chainShortNamesMapper: Record<number, ChainShortNames> = {
   1: 'eth', // Ethereum Mainnet
   10: 'op', // Optimism
   56: 'bsc', // Binance Smart Chain
@@ -27,11 +25,6 @@ export const chainShortNamesMapper: Record<number, chainShortNames> = {
   [zkSyncViem.id]: 'zkSync',
 }
 
-export type Chain = Compute<
-  viem_Chain & {
-    shortName: chainShortNames
-  }
->
 /** Filters {@link Config} chains by {@link chainId} or simplifies if no `ChainFormatters` are present. */
 export type SelectChains<
   config extends Config,
