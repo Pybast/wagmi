@@ -1,9 +1,9 @@
 import type { Address, Chain, ChainFormatters } from 'viem'
 import { celo as celoViem, zkSync as zkSyncViem } from 'viem/chains'
 
+import type { ERC3770Address } from '../actions/sendTransaction.js'
 import type { Config } from '../createConfig.js'
 import type { IsNarrowable, Merge } from './utils.js'
-import type { ERC3770Address } from '../actions/sendTransaction.js'
 
 export type ChainShortNames =
   | 'eth'
@@ -30,7 +30,7 @@ export const chainShortNamesMapper: Record<number, ChainShortNames> = {
 export function getChainIdFromShortName(shortName: string): number | undefined {
   for (const [chainId, name] of Object.entries(chainShortNamesMapper)) {
     if (name === shortName) {
-      return parseInt(chainId) // Return the numeric chainId
+      return Number.parseInt(chainId) // Return the numeric chainId
     }
   }
   return undefined // Return undefined if not found

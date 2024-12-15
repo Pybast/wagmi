@@ -3,6 +3,7 @@
   "include": ["scripts/**/*.ts", "vitest.workspace.ts", "vitest.config.ts"],
   "exclude": [],
   "compilerOptions": {
-    "types": ["@types/bun"]
+    "types": ["@types/bun"],
+    "outDir": "./dist"
   }
 }
