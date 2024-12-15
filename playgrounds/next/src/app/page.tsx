@@ -28,6 +28,7 @@ import { switchChain } from 'wagmi/actions'
 import { optimism, sepolia } from 'wagmi/chains'
 
 import { wagmiContractConfig } from './contracts'
+import { ERC3770Address } from '../../../../packages/core/dist/types/actions/sendTransaction'
 
 export default function App() {
   useAccountEffect({
@@ -264,7 +265,7 @@ function SendTransaction() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
-    const to = formData.get('address') as Hex
+    const to = formData.get('address') as ERC3770Address // use ERC3770 address format
     const value = formData.get('value') as string
     sendTransaction({ to, value: parseEther(value) })
   }
