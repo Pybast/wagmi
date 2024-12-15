@@ -16,6 +16,7 @@ export function getConfig() {
       storage: cookieStorage,
     }),
     ssr: true,
+    chainSpecificAddresses: false,
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
