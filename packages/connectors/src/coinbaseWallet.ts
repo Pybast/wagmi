@@ -407,6 +407,7 @@ function version3(parameters: Version3Parameters) {
         // See: https://github.com/vitejs/vite/issues/9703
         const CoinbaseWalletSDK = await (async () => {
           const { default: SDK } = await import('cbw-sdk')
+          // @ts-ignore
           if (typeof SDK !== 'function' && typeof SDK.default === 'function')
             return SDK.default
           return SDK as unknown as typeof SDK.default
