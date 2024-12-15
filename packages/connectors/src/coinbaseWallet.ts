@@ -409,6 +409,7 @@ function version3(parameters: Version3Parameters) {
           const { default: SDK } = await import('cbw-sdk')
           // @ts-ignore
           if (typeof SDK !== 'function' && typeof SDK.default === 'function')
+            // @ts-ignore
             return SDK.default
           return SDK as unknown as typeof SDK.default
         })()
