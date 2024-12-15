@@ -13,7 +13,7 @@ npm install wagmi-erc-3770
 
 ## Abstract
 
-This npm package is a much needed interroperability dev tool for dapps developers. It allows for very easy use of chain-specific addresses (introduced by [ERC-3770](https://eips.ethereum.org/EIPS/eip-3770)) for all dapp developers directly integrated into your favorite dapp development tool, [wagmi](https://github.com/wevm/wagmi).
+This npm package is a much needed interoperability dev tool for dapps developers. It allows for very easy use of chain-specific addresses (introduced by [ERC-3770](https://eips.ethereum.org/EIPS/eip-3770)) for all dapp developers directly integrated into your favorite dapp development tool, [wagmi](https://github.com/wevm/wagmi).
 
 ERC-3770 proposed to add a chain-specific prefix in front of addresses (ex: eth:0xd8da6bf26964af9d7eed9e03e53415d37aa96045)
 
@@ -63,6 +63,13 @@ sendTransaction({
 
   but not valid here
   <img src="./send-transaction-error.png"/>
+
+## Vision
+
+Next steps would be the following:
+- expand ERC-3770 support to all wagmi hooks
+- get in touch with the wagmi maintainers and ERC-3770 proposers to make an official OSS contribution to wagmi
+- make the same implementation into viem and other popular libraries
 
 ## Authors
 

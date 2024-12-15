@@ -1,11 +1,10 @@
-import { useSendTransaction } from 'wagmi'
 import { http, cookieStorage, createConfig, createStorage } from 'wagmi'
-import { mainnet, optimism, sepolia } from 'wagmi/chains'
+import { mainnet, optimism } from 'wagmi/chains'
 import { injected, metaMask, walletConnect } from 'wagmi/connectors'
 
 export function getConfig() {
   return createConfig({
-    chains: [mainnet, sepolia, optimism],
+    chains: [mainnet, optimism],
     connectors: [
       injected(),
       walletConnect({
@@ -20,7 +19,6 @@ export function getConfig() {
     chainSpecificAddresses: true,
     transports: {
       [mainnet.id]: http(),
-      [sepolia.id]: http(),
       [optimism.id]: http(),
     },
   })
