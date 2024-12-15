@@ -1,7 +1,9 @@
 import { accounts } from '@wagmi/test'
 import { http, createClient, webSocket } from 'viem'
 import { mainnet } from 'viem/chains'
+
 import { expectTypeOf, test } from 'vitest'
+import { mainnet } from '../../test/src/chains.js'
 
 import { mock } from './connectors/mock.js'
 import { type CreateConfigParameters, createConfig } from './createConfig.js'

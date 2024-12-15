@@ -42,6 +42,7 @@ export function extractAddressFromChainSpecificAddress(
   return address.split(':')[1] as Address
 }
 
+
 /** Filters {@link Config} chains by {@link chainId} or simplifies if no `ChainFormatters` are present. */
 export type SelectChains<
   config extends Config,

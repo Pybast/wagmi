@@ -17,6 +17,7 @@ export function getConfig() {
     }),
     ssr: true,
     chainSpecificAddresses: true,
+
     transports: {
       [mainnet.id]: http(),
       [optimism.id]: http(),

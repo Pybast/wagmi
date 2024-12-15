@@ -2,13 +2,16 @@ import type {
   Account,
   Address,
   Chain,
+
   Client,
   TransactionRequest,
+  Account as viem_Account,
   SendTransactionErrorType as viem_SendTransactionErrorType,
   SendTransactionParameters as viem_SendTransactionParameters,
   SendTransactionReturnType as viem_SendTransactionReturnType,
 } from 'viem'
 import { sendTransaction as viem_sendTransaction } from 'viem/actions'
+import type { Chain } from '../types/chain.js'
 
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
@@ -18,6 +21,7 @@ import {
   extractAddressFromChainSpecificAddress,
   getChainIdFromShortName,
 } from '../types/chain.js'
+
 import type {
   ChainIdParameter,
   ConnectorParameter,
@@ -35,6 +39,7 @@ export type ERC3770Address = `${ChainShortNames}:${Address}`
 type ToType<Config> = Config extends { chainSpecificAddresses: true }
   ? ERC3770Address
   : Address
+
 
 export type SendTransactionParameters<
   config extends Config = Config,
@@ -110,6 +115,7 @@ export async function sendTransaction<
         "Missmatch between client's chain ID and provided short name",
       )
   }
+
 
   const action = getAction(client, viem_sendTransaction, 'sendTransaction')
   const hash = await action({
