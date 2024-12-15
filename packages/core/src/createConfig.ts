@@ -5,13 +5,14 @@ import {
 } from 'mipd'
 import {
   type Address,
-  type Chain,
+  // type Chain,
   type Client,
   type EIP1193RequestFn,
   createClient,
   type ClientConfig as viem_ClientConfig,
   type Transport as viem_Transport,
 } from 'viem'
+import type { Chain } from './types/chain.js'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { type Mutate, type StoreApi, createStore } from 'zustand/vanilla'
 
@@ -50,6 +51,7 @@ export function createConfig<
     }),
     syncConnectedChain = true,
     ssr = false,
+    chainSpecificAddresses = false,
     ...rest
   } = parameters
 
@@ -297,7 +299,25 @@ export function createConfig<
         }))
       },
     )
+  // Update default chain when connector chain changes
+  // todo not sure about this line)
+  if (chainSpecificAddresses)
+    store.subscribe(
+      ({ connections, current }) =>
+        current ? connections.get(current)?.chainId : undefined,
+      (chainId) => {
+        // If chain is not configured, then don't switch over to it.
+        const isChainConfigured = chains
+          .getState()
+          .some((x) => x.id === chainId)
+        if (!isChainConfigured) return
 
+        return store.setState((x) => ({
+          ...x,
+          chainId: chainId ?? x.chainId,
+        }))
+      },
+    )
   // EIP-6963 subscribe for new wallet providers
   mipd?.subscribe((providerDetails) => {
     const connectorIdSet = new Set<string>()
@@ -453,6 +473,7 @@ export function createConfig<
       store,
       ssr: Boolean(ssr),
       syncConnectedChain,
+      chainSpecificAddresses,
       transports: rest.transports as transports,
       chains: {
         setState(value) {
@@ -506,6 +527,7 @@ export type CreateConfigParameters<
     storage?: Storage | null | undefined
     ssr?: boolean | undefined
     syncConnectedChain?: boolean | undefined
+    chainSpecificAddresses?: boolean | undefined
   } & OneOf<
     | ({ transports: transports } & {
         [key in keyof ClientConfig]?:
@@ -572,6 +594,7 @@ type Internal<
   readonly store: Mutate<StoreApi<any>, [['zustand/persist', any]]>
   readonly ssr: boolean
   readonly syncConnectedChain: boolean
+  readonly chainSpecificAddresses: boolean
   readonly transports: transports
 
   chains: {

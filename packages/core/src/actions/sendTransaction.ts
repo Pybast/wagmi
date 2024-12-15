@@ -1,17 +1,18 @@
 import type {
-  Account,
-  Chain,
+  Address,
   Client,
   TransactionRequest,
+  Account as viem_Account,
   SendTransactionErrorType as viem_SendTransactionErrorType,
   SendTransactionParameters as viem_SendTransactionParameters,
   SendTransactionReturnType as viem_SendTransactionReturnType,
 } from 'viem'
 import { sendTransaction as viem_sendTransaction } from 'viem/actions'
+import type { Chain } from '../types/chain.js'
 
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import type { SelectChains } from '../types/chain.js'
+import type { SelectChains, chainShortNames } from '../types/chain.js'
 import type {
   ChainIdParameter,
   ConnectorParameter,
@@ -22,6 +23,13 @@ import {
   type GetConnectorClientErrorType,
   getConnectorClient,
 } from './getConnectorClient.js'
+
+export type ERC3770Address = `${chainShortNames}:${Address}`;
+
+export type Account<address extends Address = `0x${string}`> = viem_Account<address> & {
+  address: ERC3770Address;  // Override address with ERC3770Address
+  chainId: number;  // Optional: chainId to derive chain prefix if necessary
+};
 
 export type SendTransactionParameters<
   config extends Config = Config,
@@ -73,7 +81,6 @@ export async function sendTransaction<
       chainId,
       connector,
     })
-
   const action = getAction(client, viem_sendTransaction, 'sendTransaction')
   const hash = await action({
     ...(rest as any),
