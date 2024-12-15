@@ -27,15 +27,15 @@ import {
   useWaitForTransactionReceipt,
   // useWriteContract,
 } from 'wagmi'
+import type { ERC3770Address } from '../../../../packages/core/src/actions/sendTransaction'
 // import { switchChain } from "wagmi/actions";
 // import { optimism, sepolia } from "wagmi/chains";
 
-import type { ERC3770Address } from '../../../../packages/core/dist/types/actions/sendTransaction'
 // import { wagmiContractConfig } from "./contracts";
 
 export default function App() {
   useAccountEffect({
-    onConnect(_data) {
+    onConnect(_data: any) {
       // console.log('onConnect', data)
     },
     onDisconnect() {
