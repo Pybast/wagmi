@@ -411,6 +411,7 @@ function version3(parameters: Version3Parameters) {
           if (typeof SDK !== 'function' && typeof SDK.default === 'function')
             // @ts-ignore
             return SDK.default
+          // @ts-ignore
           return SDK as unknown as typeof SDK.default
         })()
 
