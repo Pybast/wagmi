@@ -7,6 +7,7 @@ import type { chain } from './chains.js'
  *
  * This is used by the anvil proxy to route requests to the correct anvil instance.
  */
+
 export const pool = Number(process.env.VITEST_POOL_ID ?? 1)
 
 // Test accounts

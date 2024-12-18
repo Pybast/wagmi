@@ -1,6 +1,84 @@
 <!-- > [!IMPORTANT] -->
 <!-- > Wagmi is participating in Gitcoin Grants round 21. Consider <a href="https://explorer.gitcoin.co/#/round/42161/389/74">supporting the project</a>. Thank you. 🙏 -->
 
+# Wagmi [ERC-3770](https://eips.ethereum.org/EIPS/eip-3770) implementation
+
+This is a fork of the [official wagmi typescript package](https://github.com/wevm/wagmi) which implements support for [ERC-3770](https://eips.ethereum.org/EIPS/eip-3770) address typing and verification.
+
+## Installation
+
+```shell
+npm install wagmi-erc-3770
+```
+
+## Abstract
+
+This npm package is a much needed interoperability dev tool for dapps developers. It allows for very easy use of chain-specific addresses (introduced by [ERC-3770](https://eips.ethereum.org/EIPS/eip-3770)) for all dapp developers directly integrated into your favorite dapp development tool, [wagmi](https://github.com/wevm/wagmi).
+
+ERC-3770 proposed to add a chain-specific prefix in front of addresses (ex: eth:0xd8da6bf26964af9d7eed9e03e53415d37aa96045)
+
+It  allows dapp developers to use chain-specific addresses in their UX to make sure that no funds would be sent to the wrong chain.
+
+## Problem
+
+In an increasingly multi EVM chain world, sending tokens to an address but on the wrong chain, It can quickly result in user inconvenience, prolonged resolution time or worse, lost funds.
+
+It's actually quite easy to see this problem with your own eyes.
+
+1. Find a popular DeFi contract (let's take [UniswapV3Router on ethereum](https://etherscan.io/address/0xE592427A0AEce92De3Edee1F18E0157C05861564))
+2. Let's look at the [address on Base](https://basescan.org/address/0xe592427a0aece92de3edee1f18e0157c05861564)
+3. There is no contract deployed there, but you can see that the address holds 2.11 ETH, this is lost funds from unfortunate users who were victim of a bug from the dapp (or wallet). It's the uge issue as there are more than 4,800 transactions pointing to this address on base alone.
+
+To better understand the issue here, most of the time, it comes from dapps that poorly verify that the wallet is connected to the right chain. Some edge cases sometimes allow sending transaction data - which don't specify the chain - to the wallet, in order to be signed and executed.
+
+This is a dapp development issue that could be mitigated with better dev tooling.
+
+## Solution
+
+We made this dev tool available by implementing ERC3770 **compile-time type validation** and **runtime chain-specific address verification** directly inside your beloved wagmi npm package.
+
+### Features
+
+1. Optionnaly activate chain-specific addresses
+```ts
+createConfig({
+  chains: [mainnet, sepolia, optimism],
+  connectors: [
+    injected(),
+  ],
+  chainSpecificAddresses: true, // here
+})
+```
+
+2. Send transaction will validate the type of the `to` destination
+```ts
+sendTransaction({
+  to, // here
+  value: parseEther(value)
+});
+```
+
+  to is valid here
+  <img src="./send-transaction.png"/>
+
+  but not valid here
+  <img src="./send-transaction-error.png"/>
+
+## Vision
+
+Next steps would be the following:
+- expand ERC-3770 support to all wagmi hooks
+- get in touch with the wagmi maintainers and ERC-3770 proposers to make an official OSS contribution to wagmi
+- make the same implementation into viem and other popular libraries
+
+## Authors
+
+Built during the AlephDeVerano - A global hybrid event empowering blockchain innovation from Argentina, fostering impactful projects and collaboration across the Web3 ecosystem.
+- [Tasneem Toolba](https://github.com/tasneemtoolba)
+- [Pybast](https://github.com/pybast)
+
+# Official README
+
 <br>
 
 <p align="center">

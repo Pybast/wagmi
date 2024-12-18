@@ -1,7 +1,47 @@
-import type { Chain, ChainFormatters } from 'viem'
+import type { Address, Chain, ChainFormatters } from 'viem'
+import { celo as celoViem, zkSync as zkSyncViem } from 'viem/chains'
 
+import type { ERC3770Address } from '../actions/sendTransaction.js'
 import type { Config } from '../createConfig.js'
 import type { IsNarrowable, Merge } from './utils.js'
+
+export type ChainShortNames =
+  | 'eth'
+  | 'bsc'
+  | 'pol'
+  | 'arb'
+  | 'op'
+  | 'wag'
+  | 'celo'
+  | 'zkSync'
+
+export const chainShortNamesMapper: Record<number, ChainShortNames> = {
+  1: 'eth', // Ethereum Mainnet
+  10: 'op', // Optimism
+  56: 'bsc', // Binance Smart Chain
+  137: 'pol', // Polygon (Matic)
+  456: 'wag', // Wagmi (Matic)
+  42161: 'arb', // Arbitrum One
+  [celoViem.id]: 'celo',
+  [zkSyncViem.id]: 'zkSync',
+}
+
+// Function to get chainId from short name
+export function getChainIdFromShortName(shortName: string): number | undefined {
+  for (const [chainId, name] of Object.entries(chainShortNamesMapper)) {
+    if (name === shortName) {
+      return Number.parseInt(chainId) // Return the numeric chainId
+    }
+  }
+  return undefined // Return undefined if not found
+}
+
+export function extractAddressFromChainSpecificAddress(
+  address: ERC3770Address | Address,
+): Address {
+  return address.split(':')[1] as Address
+}
+
 
 /** Filters {@link Config} chains by {@link chainId} or simplifies if no `ChainFormatters` are present. */
 export type SelectChains<
