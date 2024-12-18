@@ -37,9 +37,15 @@ export function createConfig<
   const chains extends readonly [Chain, ...Chain[]],
   transports extends Record<chains[number]['id'], Transport>,
   const connectorFns extends readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 >(
-  parameters: CreateConfigParameters<chains, transports, connectorFns>,
-): Config<chains, transports, connectorFns> {
+  parameters: CreateConfigParameters<
+    chains,
+    transports,
+    connectorFns,
+    chainSpecificAddresses
+  >,
+): Config<chains, transports, connectorFns, chainSpecificAddresses> {
   const {
     multiInjectedProviderDiscovery = true,
     storage = createStorage({
@@ -50,6 +56,7 @@ export function createConfig<
     }),
     syncConnectedChain = true,
     ssr = false,
+    chainSpecificAddresses = false as chainSpecificAddresses,
     ...rest
   } = parameters
 
@@ -417,6 +424,8 @@ export function createConfig<
     },
     storage,
 
+    chainSpecificAddresses: chainSpecificAddresses,
+
     getClient,
     get state() {
       return store.getState() as unknown as State<chains>
@@ -498,9 +507,11 @@ export type CreateConfigParameters<
   >,
   connectorFns extends
     readonly CreateConnectorFn[] = readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 > = Compute<
   {
     chains: chains
+    chainSpecificAddresses?: chainSpecificAddresses
     connectors?: connectorFns | undefined
     multiInjectedProviderDiscovery?: boolean | undefined
     storage?: Storage | null | undefined
@@ -514,10 +525,9 @@ export type CreateConfigParameters<
           | undefined
       })
     | {
-        client(parameters: { chain: chains[number] }): Client<
-          transports[chains[number]['id']],
-          chains[number]
-        >
+        client(parameters: {
+          chain: chains[number]
+        }): Client<transports[chains[number]['id']], chains[number]>
       }
   >
 >
@@ -530,10 +540,13 @@ export type Config<
   >,
   connectorFns extends
     readonly CreateConnectorFn[] = readonly CreateConnectorFn[],
+  chainSpecificAddresses extends boolean = boolean,
 > = {
   readonly chains: chains
   readonly connectors: readonly Connector<connectorFns[number]>[]
   readonly storage: Storage | null
+
+  chainSpecificAddresses: chainSpecificAddresses
 
   readonly state: State<chains>
   setState<tchains extends readonly [Chain, ...Chain[]] = chains>(
